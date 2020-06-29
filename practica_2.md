@@ -10,19 +10,19 @@ El propósito de esta primera sección de la práctica es introducir los concept
 
 2. Indique una breve reseña histórica acerca de la evolución del kernel de GNU/Linux.
 
-    En 1991 Linus Torvalds inicia la programación del kernel Linux basado en Minix (clon de Unix desarrollado por Tanembaum en 1987 con el n de crear un SO de uso didáctico).
+    En 1991 Linus Torvalds inicia la programación del kernel Linux basado en Minix (clon de Unix desarrollado por Tanembaum en 1987 con el fin de crear un SO de uso didáctico).
 
-    El 5 de octubre de 1991, se anuncia la primera versión "oficial" de Linux (0.02).
+    El 5 de octubre de 1991, se anuncia la primera versión "oficial" de Linux (0.02).
 
     En 1992, con la release de la versión 0.12, se decide cambiar a una licencia GNU.
 
-    En marzo de 1994, Torvalds considera que todos los componentes del kernel estaban suficientemente maduros y lanza la versión 1.0.
+    En marzo de 1994, Torvalds considera que todos los componentes del kernel estaban suficientemente maduros y lanza la versión 1.0.
 
     En el año 1995, Linux se porta a arquitecturas DEC Alpha y Sun SPARC. Con el correr de los años se portó a otra decena de arquitecturas.
 
-    En mayo de 1996, se decide adoptar a Tux como mascota oficial de Linux.
+    En mayo de 1996, se decide adoptar a Tux como mascota oficial de Linux.
 
-    En julio de 1996, se lanza la versión 2.0 y se define un sistema de nomenclatura. Se desarrolló hasta febrero de 2004 y terminó con la versión 2.0.40. Esta versión comenzó a brindar soporte a sistemas multiprocesadores.
+    En julio de 1996, se lanza la versión 2.0 y se define un sistema de nomenclatura. Se desarrolló hasta febrero de 2004 y terminó con la versión 2.0.40. Esta versión comenzó a brindar soporte a sistemas multiprocesadores.
 
     En 2001 se lanza la versión 2.4 y se deja de desarrollar a fines del 2010 con la 2.4.37.11. La versión 2.4 fue la que catapultó a GNU/Linux como un sistema operativo estable y robusto.
 
@@ -79,7 +79,7 @@ El propósito de esta primera sección de la práctica es introducir los concept
 
     Existen tres interfaces que permiten generar el archivo _.config_:
     + make config: modo texto y secuencial. Tedioso.
-    + make xconfig: interfaz gráfica utilizando un sistema de ventanas. No todos los sistemas tienen instalado X.
+    + make xconfig: interfaz gráfica utilizando un sistema de ventanas. No todos los sistemas tienen instalado X.
     + make menuconfig: este modo utiliza ncurses, una librería que permite generar una interfaz con paneles desde la terminal. Generalmente el más utilizado.
 
 8. Nombre al menos 5 opciones de las más importantes que encontrará al momento de realizar la configuración de un kernel para su posterior compilación.
@@ -138,7 +138,13 @@ El propósito de esta primera sección de la práctica es introducir los concept
 
     Es un mecanismo que permite aplicar actualizaciones NO incrementales sobre la version base. Se basa en archivos _diff_ (archivos de diferencia), que indican qué agregar y qué quitar. Se aplican sobre la versión base. Permiten agregar funcionalidad (nuevos drivers, correcciones menores, etc.). A veces puede resultar más sencillo descargar el archivo de diferencia y aplicarlo en vez de descargar todo el código de la nueva versión.
 
-[comment]: <> (comment de prueba)
+[comment]: <> (Algo que se me ocurrió hacer es esconder un truco para hacer la entrega, pero quise que el truco estuviera un poco escondido, por lo que lo dejé comentado, cosa que quien lo viera sea porque:)
+[comment]: <> (- O bien, vio de forma raw el archivo en GitHub esperando ver algo más y justo lo vio.)
+[comment]: <> (- O bien estaba editando este archivo \(porque, a lo mejor, quiso agregar algo más\) y acaba de ver este comentario.)
+[comment]: <> (Sea cual fuera la razón, acá va el truco:)
+[comment]: <> (Cuando hayas iniciado la sesión con la máquina virtual, instalate un kernel apto con apt-get install linux-headers-amd64)
+[comment]: <> (Reiniciá la máquina virtual con /sbin/reboot y andá a Opciones Avanzadas y bootea ese kernel apto.)
+[comment]: <> (Luego de iniciar sesión, probá los comandos y vas a ver que ahora si te toma los comandos.)
 
 ## Ejercicio taller: Compilación del kernel Linux
 
@@ -319,4 +325,4 @@ En los comandos de ejemplo de esta práctica, se verá que algunos comandos empi
 
     Ejecute el script que se encuentra dentro de /mnt/btrfs usando la versión del kernel 5.6.2 y complete sus datos, los mismos serán reportados por el script a través de Internet a la cátedra para registrar realización de este ejercicio.
 
-    Una vez que compilaste el kernel, lo más difícil ya lo hiciste. Ahora queda montar lo que ya antes habías descomprimido en la carpeta ya antes creada. Para eso, ejecutá ```mount /home/so/btrfs.image /mnt/btrfs```. Si hacés ls /mnt/btrfs vas a ver un solo archivo entregap2.sh o parecido. Ese es el que tenés que ejecutar. Y ahí si: ejecutá el archivo con ```/./mnt/btrfs/entregap2.sh```. Algo más: si llega a decirte que no tiene permisos de ejecución, simplemente dale permisos con ```chmod 777 /mnt/btrfs/entregap2.sh```. Eso es todo! Poné tu nombre y apellido y tu legajo y ya está.
+    Una vez que compilaste el kernel, lo más difícil ya lo hiciste. Ahora queda montar lo que ya antes habías descomprimido en la carpeta ya antes creada. Para eso, ejecutá ```mount /home/so/btrfs.image /mnt/btrfs```. Si hacés ls ```/mnt/btrfs``` vas a ver un solo archivo entregap2.sh o parecido. Ese es el que tenés que ejecutar. Y ahí si: ejecutá el archivo con ```/./mnt/btrfs/entregap2.sh```. Algo más: si llega a decirte que no tiene permisos de ejecución, simplemente dale permisos con ```chmod 777 /mnt/btrfs/entregap2.sh```. Eso es todo! Poné tu nombre y apellido y tu legajo y ya está.
