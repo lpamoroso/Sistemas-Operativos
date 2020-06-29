@@ -10,7 +10,7 @@ El propósito de esta primera sección de la práctica es introducir los concept
 
 2. Indique una breve reseña histórica acerca de la evolución del kernel de GNU/Linux.
 
-    En 1991 Linus Torvalds inicia la programación del kernel Linux basado en Minix (clon de Unix desarrollado por Tanembaum en 1987 con el fin de crear un SO de uso didáctico).
+    En 1991 Linus Torvalds inicia la programación del kernel Linux basado en Minix (clon de Unix desarrollado por Tanembaum en 1987 con el fin de crear un SO de uso didáctico).
 
     El 5 de octubre de 1991, se anuncia la primera versión "oficial" de Linux (0.02).
 
