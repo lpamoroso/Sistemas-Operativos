@@ -138,14 +138,6 @@ El propósito de esta primera sección de la práctica es introducir los concept
 
     Es un mecanismo que permite aplicar actualizaciones NO incrementales sobre la version base. Se basa en archivos _diff_ (archivos de diferencia), que indican qué agregar y qué quitar. Se aplican sobre la versión base. Permiten agregar funcionalidad (nuevos drivers, correcciones menores, etc.). A veces puede resultar más sencillo descargar el archivo de diferencia y aplicarlo en vez de descargar todo el código de la nueva versión.
 
-[comment]: <> (Algo que se me ocurrió hacer es esconder un truco para hacer la entrega, pero quise que el truco estuviera un poco escondido, por lo que lo dejé comentado, cosa que quien lo viera sea porque:)
-[comment]: <> (- O bien, vio de forma raw el archivo en GitHub esperando ver algo más y justo lo vio.)
-[comment]: <> (- O bien estaba editando este archivo \(porque, a lo mejor, quiso agregar algo más\) y acaba de ver este comentario.)
-[comment]: <> (Sea cual fuera la razón, acá va el truco:)
-[comment]: <> (Cuando hayas iniciado la sesión con la máquina virtual, instalate un kernel apto con apt-get install linux-headers-amd64)
-[comment]: <> (Reiniciá la máquina virtual con /sbin/reboot y andá a Opciones Avanzadas y bootea ese kernel apto.)
-[comment]: <> (Luego de iniciar sesión, probá los comandos y vas a ver que ahora si te toma los comandos.)
-
 ## Ejercicio taller: Compilación del kernel Linux
 
 El propósito del siguiente ejercicio es el de guiar al alumno en el proceso de compilación del kernel de GNU/Linux. Si bien los siguientes ejercicios permiten agregar determinada funcionalidad al kernel, es aconsejable que los alumnos investiguen las distintas opciones con el fin de adquirir experiencia adicional. Para la realización de este taller se ha utilizado la versión 5.6.2 del kernel de GNU/Linux. Aquel alumno que decida utilizar otra versión deberá descargar el código fuente y los parches del kernel correspondientes de acuerdo a la versión utilizada.
