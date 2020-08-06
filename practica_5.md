@@ -3,10 +3,13 @@
 ## Parte 1: Conceptos teóricos
 
 1. Defina virtualización. Investigue cuál fue la primer implementación que se realizó.
+
     Es una técnica que permite realizar "abstracción" de recursos de la computadora. Hoy en día también se virtualizan las redes, datacenters, entre otros. Es una capa abstracta que desacopla el hardware físico del sistema. Permite ocultar detalles técnicos a través de la encapsulación; y, entre otras cosas, que una computadora pueda realizar el trabajo de varias a través de la compartición de recursos de un único dispositivo de hardware.
 
     La primera virtualización la llevó a cabo IBM en 1964 en el Centro Científico de Cambridge con el desarrollo de la CP-40, la precursora de la CP-67. CP-40 era un sistema operativo máquina virtual/memoria virtual de tiempo compartido para el IBM System/360 modelo 67. CP-40 corrió varias instancias de sistemas operativos cliente - en particular CMS, el Sistema de monitoreo de Cambridge, construidos como parte del mismo esfuerzo.
+
 2. ¿Qué diferencia existe entre virtualización y emulación?
+
     Un emulador es un programa de software que simula la funcionalidad de otro programa o un componente de hardware. Dado que implementa funcionalidad por software, proporciona una gran flexibilidad y la capacidad de recopilar información muy detallada acerca de la ejecución.
 
     El programa incluso podría ser escrito para una arquitectura diferente a aquella sobre la cual el emulador se ejecuta –como ser, ejecutar un programa de Android escrito para ARM en un emulador sobre un host x86. El inconveniente de la emulación es que la capa de software incurre en una penalización en el rendimiento, que debe ser cuidadosamente administrada a fin de crear un sistema escalable.
@@ -14,36 +17,65 @@
     Con la virtualización, el programa huésped se ejecuta realmente en el hardware subyacente. El software de virtualización (VMM por Virtual Machine Monitor) sólo media en los accesos de las diferentes máquinas virtuales al hardware real. Así, éstas son independientes, y pueden ejecutar programas a velocidad casi nativa.
 
     Sin embargo, un programa en ejecución ocupa los recursos físicos reales, y como resultado, el VMM y el sistema de análisis no pueden ejecutarse simultáneamente, volviendo un desafío a la recolección detallada de datos. Además, es difícil lograr ocultar por completo el VMM de las rutinas de detección embebidas en las muestras de malware.
+
 3. Investigue el concepto de hypervisor y responda:
+
     1. ¿Qué es un hypervisor?
+
         Un hipervisor es una plataforma que permite aplicar diversas técnicas de control de virtualización para utilizar, al mismo tiempo, diferentes sistemas operativos (sin modificar o modificados, en el caso de la paravirtualización) en una misma computadora.
+
     2. ¿Qué beneficios traen los hypervisors? ¿Cómo se clasifican?
+
         Algunas ventajas de los hipervisores es que son los que se encargan de la multiprogramación y ofrecen varias máquinas virtuales hacia arriba. Hay dos tipos:
         * Tipo 1: se ejecuta sobre el hardware. El hypervisor se ejecuta en modo kernel real. El sistema operativo invitado es en modo kernel "virtual" (pero es modo usuario).
         * Tipo 2: se ejecuta como un programa de usuario sobre un sistema operativo anfitrión. Arriba de él, están los sistema operativos invitados. Interpreta solo un conjunto de instrucciones de máquina. El sistema operativo anfitrión es quién se ejecuta sobre el hardware.
+
     3. Indique por qué un hypervisor de tipo 1 no podría correr en una arquitectura sin tecnología de virtualización. ¿Y un hypervisor de tipo 2 en hardware sin tecnología de virtualización?
+
         El hipervisor de tipo 2 ejecuta en modo usuario como un proceso más del sistema operativo anfitrión. Las instrucciones sensibles se sustituyen por llamadas a procedimiento que emulan las instrucciones. El verdadero hardware **NUNCA** ejecuta aquellas sensibles que emite el sistema operativo invitado: las ejecuta siempre como llamadas el hypervisor. Todo el hardware es emulado, inclusive la CPU.
+
 4. Investigue el concepto de paravirtualización y responda:
+
     1. ¿Qué es la paravirtualización?
+
         La paravirtualización es una técnica que permite virtualizar por software sistemas operativos. El programa paravirtualizador presenta una interfaz de manejo de máquinas virtuales. Cada máquina virtual se comporta como un computador independiente, por lo que permite usar un sistema operativo o varios por computador emulado.
+
     2. ¿Sería posible utilizar paravirtualización en sistemas operativos como Windows o iOS? ¿Por qué?
+
         La paravirtualización requiere que el sistema operativo invitado sea portado de manera explícita para la API. Una distribución de un sistema operativo convencional que no soporte paravirtualización no puede ser ejecutada ni visualizada en un monitor de máquina virtual VMM.
+
     3. Mencione algún sistema que implemente paravirtualización.
+
         Windows XP tiene una versión paravirtualizable, por ejemplo, así como también GNU/Linux. El tema con Windows XP es que no puede distrubuirse fuera de XenSource ya que la adaptación de Windows fue realizada bajo los términos del Academic Licensing Program, que permitía a los investigadores acceso y modificación al código fuente, pero no su redistribución.
+
     4. Defina VMI.
+
         VMI (Virtual Machine Interface o Interfaz de Máquina virtual, en español), es una especificación extensible claramente definida para la comunicación del sistema operativo con el hipervisor.
+
     5. ¿Qué beneficios trae con respecto al resto de los modos de virtualización?
+
         VMI ofrece un gran rendimiento sin requerir que los desarrolladores del kernel conozcan conceptos que solo son relevantes para el hipervisor. Como consecuencia, es posible seguir el ritmo acelerado del desarollo del kernel de Linux, ya que las nuevas versiones del kernel puede ser trivialmente paravirtualizadas. Con VMI, un solo binario del kernel de Linux puede ejecutarse en una máquina nativa y en uno o más hipervisores.
+
     6. Investigue si VMI podría correr sobre hypervisors de tipo 1 ó 2, y justifique por qué.
+
         VMI puede correr sobre cualquier hypervisor ya que es una interface para permitir la paravirtualización, no depende sobre que hypervisor ejecuta.
+
 5. Investigue sobre _containers_ en el ámbito de la virtualización y responda:
+
     1. ¿Qué son?
+
         Son grupos de procesos corriendo sobre el mismo kernel que pueden aislarse en entornos que parecen máquinas separadas. No son una máquina virtual sino entornos virtuales, con su propio espacio de procesos y de nombres. Se basan en cgroups.
+
     2. ¿Dependen del hardware subyacente?
+
         No, ya que lo que emulan es un sistema operativo y no el hardware subyacente.
+
     3. ¿Qué lo diferencia por sobre el resto de las tecnologías estudiadas?
+
         Que, por ejemplo, es posible controlar la asignación de recursos: puedo asignarle a un container más ancho de banda de red, o tiempo de CPU. También es posible _freezar_ un container (funcionalidad muy útil para migrciones, por cierto), de modo que todos los procesos de éste se suspenden.
+
     4. Investigue qué funcionalidades son necesarias para poder implementar containers.
+
         Solo es necesario un motor para el container.
 
 ## Parte 2: chroot, Control Groups, Namespaces y Containers
