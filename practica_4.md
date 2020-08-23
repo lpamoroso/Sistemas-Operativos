@@ -4,13 +4,33 @@
 
 _Para poder realizar la siguiente práctica es necesario tener instalado un sistema operativo Linux con un espacio libre de 10GB como mínimo. Además, se deberán instalar los paquetes necesarios para poder generar el RAID y LVM._
 
-Obs. 1: al final de la práctica se encuentran algunos links de referencia para las siguientes preguntas
+Observación 1: Algunos links de referencia para las siguientes preguntas
+
+<http://www.nongnu.org/ext2-doc/ext2.html>
+
+<http://e2fsprogs.sourceforge.net/ext2intro.html>
+
+<http://www.cyberciti.biz/tips/understanding-unixlinux-filesystem-superblock.html>
+
+<http://www.tldp.org/LDP/tlk/fs/filesystem.html>
+
+<https://kernelnewbies.org/Ext4>
+
+<http://www.geekride.com/hard-link-vs-soft-link/>
+
+<https://www.howtoforge.com/linux_lvm>
+
+<https://www.digitalocean.com/community/tutorials/an-introduction-to-lvm-concepts-terminology-and-operations>
+
+<https://btrfs.wiki.kernel.org/index.php/Main_Page>
+
+<https://lwn.net/Articles/579009/>
 
 ## File Systems
 
 1. ¿Qué es un file-system?
 
-    Es la parte del sistema operativo que se encarga del manejo de archivos. Es una abstracción que permite la creación, eliminación, modificación, búsqueda y organización de archivos en directorios. También administra el control de acceso a los archivos y el espacio en disco asignado a él. Los filesystems operan sobre bloques de datos, es decir, conjuntos de consecutivos de sectores físicos. La estructura por excelencia utilizada para el almacenamiento es jerárquica de tipo árbol. Además, definen convenciones para el nombrado de los archivos. Lo cierto es que hay muchos tipos de ellos, los hay en CDs e, incluso, de acceso de red(NFS o SMB) y virtuales(procfs o sysfs).
+    Es la parte del sistema operativo que se encarga del manejo de archivos. Es una abstracción que permite la creación, eliminación, modificación, búsqueda y organización de archivos en directorios. También administra el control de acceso a los archivos y el espacio en disco asignado a él. Los filesystems operan sobre bloques de datos, es decir, conjuntos consecutivos de sectores físicos. La estructura por excelencia utilizada para el almacenamiento es jerárquica de tipo árbol. Además, definen convenciones para el nombrado de los archivos. Lo cierto es que hay muchos tipos de ellos, los hay en CDs e, incluso, de acceso de red(NFS o SMB) y virtuales(procfs o sysfs).
 
 2. Describa las principales diferencias y similitudes entre los file systems: FAT, NTFS, Ext(2,3,4), XFS y HFS+.
 
@@ -746,7 +766,7 @@ A continuación se creará un LVM utilizando las particiones **/dev/sda5**, **/d
 
 4. Por defecto, BTRFS ¿Replica los datos? ¿Y los metadatos? ¿Es posible modificar esto? ¿Cómo lo haría? (Hint: usar ```btrfs fi df -h /disco5``` o ```btrfs df usage /disco5```).
 
-    Por defecto, BtrFS no replica Data pero si Metadata y System. Acerca de si es posible modificar esto, lo cierto es que no encontré el comando para hacerlo, pero sé que cuando se crea un BtrFS en un SSD, la replicación viene desactivada (aparentemente, por cuestiones de performance). El comando que se usa para activarla es ```sudo btrfs balance start -v -mconvert=dup /toplevel/```. //PREGUNTAR
+    Por defecto, BtrFS no replica Data pero si Metadata y System. Acerca de si es posible modificar esto, lo cierto es que no encontré el comando para hacerlo, pero sé que cuando se crea un BtrFS en un SSD, la replicación viene desactivada (aparentemente, por cuestiones de performance). El comando que se usa para activarla es ```sudo btrfs balance start -v -mconvert=dup /toplevel/```.
 
 5. ¿Cuál es el espacio alocado? ¿Y el ocupado realmente? Utilice los comandos ```df -h```, ```btrfs fi show```, ```btrfs fi df -h /disco5``` y ```btrfs df usage /disco5```.
 
@@ -760,34 +780,62 @@ A continuación se creará un LVM utilizando las particiones **/dev/sda5**, **/d
 
 7. Asignar la otra partición a _/disco5_ ¿Se modificaron los valores con respecto al punto anterior?
 
+    Primero, para asignar una nueva partición al dispositivo btrfs, hay que hacer ```btrfs device add /dev/sda6 /mnt/disco5```. El espacio alocado permaneció igual. El espacio desalocado del dispositivo se modificó ya que se sumó el espacio de la nueva partición. Al espacio free se le sumó el espacio aportado por la nueva partición. El resto de los campos, como system y metadata, quedaron exactamente igual.
+
 8. Generar otro archivo de 3000MB en el directorio _/disco5_ ¿Aumenta el espacio alocado? ¿Cuánto espacio se ha ocupado realmente?
 
-9. Usando las dos particiones anteriores crear un RAID1 y montarlo en _/disco5_. ¿Qué partición puede elegir para montar el file system? (Desmontar previamente la partición montada en _/disco5_)
+    Si, aumenta el espacio alocado, lo interesante es que aloca todo el espacio de la partición recién añadida, incluso no siendo necesario (queda 5.67GB espacio libre que no era necesario alocar).
+
+9. Usando las dos particiones anteriores, crear un RAID1 y montarlo en _/disco5_. ¿Qué partición puede elegir para montar el file system? (Desmontar previamente la partición montada en _/disco5_)
+
+    Para crear un raid1 entre las dos particiones anteriores, hay que ejecutar ```mkfs.btrfs -d raid0 /dev/sda5 /dev/sda6```.
 
 10. ¿Es posible generar los dos archivos anteriores en ese filesystem? ¿Por qué?
 
-11. Eliminar todo el contenido de _/disco5_ y generar dos subvolúmenes, llamados _vol1_ y _vol2_. ¿Puede ver los subvolúmenes creados? ¿Qué ID tiene cada uno? ¿Qué significa el ID 5?
+    No, ya que ahora el apartado de Data está en RAID1, esto significa que todo se escriba de forma espejada, lo cual hace que no pueda guardar el archivo de 3000MB dado que, en realidad, estoy guardando 6000MB, es decir, 3000 del archivo y 3000 de su copia espejada.
 
-12. Montar esos volúmenes, vol1 y vol2, en los directorios _/volumen1_ y _/volumen2_ respectivamente. ¿Qué espacio disponible tiene cada volumen? ¿Es posible acotar el espacio de un volumen? ¿Es necesario que esté montado el subvolumen top-level para poder montar sus subvolúmenes?
+11. Eliminar todo el contenido de _/disco5_ y generar dos subvolúmenes, llamados _vol1_ y _vol2_ ¿Puede ver los subvolúmenes creados? ¿Qué ID tiene cada uno? ¿Qué significa el ID 5?
 
-13. Generar un archivo de 300MB en el directorio _/disco5/vol1_, ¿es posible ver el archivo en _/volumen1_? Si ejecuta el comando ```df -h```, ¿qué espacio se ha consumido _disco5_, _volumen1_ y _volumen2_? ¿Por qué sucede esto?
+    Para eliminar todo el contenido de /disco5, hice un ```rm -rf /mnt/disco5/*```. Luego, para generar los subvolúmenes, primero es necesario elegir una carpeta en que esté montado un filesystem btrfs, en mi caso /dev/sda5 en /mnt/btrfs. Para montar, usar ```mount /dev/sda5 /mnt/btrfs```.
 
-14. Limitar el tamaño del subvolumen volumen2 a 300MB. Intentar copiar un archivo de 400MB, ¿es posible hacerlo? (Hint: ```btrfs quota ...```).
+    Luego, los comandos para crear los subvolúmenes son:
+
+    ```bash
+    btrfs subvolume create /mnt/disco5/vol1.
+    btrfs subvolume create /mnt/disco5/vol2.
+    ```
+
+    Es posible ver los subvolúmenes creados ejecutando ```btrfs subvolume list -o /mnt/disco5```. Vol1 tiene el id 265 y vol2, 266. A su vez, el id 5 es el id del subvolumen top-level, en este caso, /mnt/btrfs.
+
+12. Montar esos volúmenes, vol1 y vol2, en los directorios _/volumen1_ y _/volumen2_ respectivamente ¿Qué espacio disponible tiene cada volumen? ¿Es posible acotar el espacio de un volumen? ¿Es necesario que esté montado el subvolumen top-level para poder montar sus subvolúmenes?
+
+    De por sí, no es necesario que el subvolumen top-level esté montado para poder montar sus subvolúmenes. Ejecutando ```mount -o subvol=vol1 /dev/sda5 /mnt/volumen1``` (idem con el volumen2), lo que estaría haciendo es montar el subvolumen vol1 de /dev/sda5 en /mnt/volumen1. Específicamente ese volumen sin necesidad de montar la raiz. Ademas, es posible expandir el espacio de un volúmen con ```btrfs filesystem resize```; pero no achicarlo, para esto hay que borrar el volumen y crearlo nuevamente con el tamaño deseado.
+
+13. Generar un archivo de 300MB en el directorio _/disco5/vol1_ ¿Es posible ver el archivo en _/volumen1_? Si ejecuta el comando ```df -h``` ¿Qué espacio se ha consumido _disco5_, _volumen1_ y _volumen2_? ¿Por qué sucede esto?
+
+    Si, es posible ver el archivo en ambos casos.
+
+14. Limitar el tamaño del subvolumen volumen2 a 300MB. Intentar copiar un archivo de 400MB ¿Es posible hacerlo? (Hint: ```btrfs quota ...```).
+
+    Para limitar el tamaño del subvolumen, hay que activar la opción de quota de btrfs con ```btrfs quota enable /mnt/disco5/vol2```. Una vez que se ha activado la quota, ahora debe establecerse el límite alterando el qgroup específico. Para definir el límite, ejecuto ```btrfs qgroup limit 300M 266 /mnt/disco5/vol2```. Lo que indica el comando es limitar el qgroup de 266 (vol2) que está en: /mnt/disco5/vol2 a 300MiB. Una vez definida la quota, al copiar un archivo de mayor tamaño, tira error, ya que se habrá excedido la cuota de disco.
 
 15. Elevar el tamaño de la cuota a 450MB ¿Es posible ahora? (Previamente revisar si el volumen está vacío)
 
+    Para elevar la quota ejecuto ```btrfs qgroup limit 450M 266 /mnt/disco5/vol2```. Lo que indica el comando es limitar el qgroup de 266 (es decir, vol2) que está en: /mnt/disco5/vol2, a 450MiB.
+
 16. Realizar un snapshot del subvolumen _/disco5/vol1_ en _/disco5/snap_. Antes de esto crear un archivo con el texto **Esto es una prueba de un snapshot** y otro archivo de 100MB. Chequear, antes y después de generar el snapshot, con ```df -h``` y los comandos de btrfs el espacio alocado y consumido ¿Se incrementó el espacio consumido? ¿Por qué?
 
+    Para empezar creo el archivo con el texto _Esto es una prueba de un snapshot_ en /mnt/disco5/vol1. Se puede usar vim o nano para crear un nuevo archivo. En este caso yo usé el nano, por lo que ejecuté ```nano /mnt/disco5/vol1/test | cat > "Esto es una prueba de un snapshot"```. Ahora hay que crear el otro archivo de 100Mb, por lo que ejecuto ```dd if=/dev/zero of=/mnt/disco5/vol1/so1 bs=50M count=2```. Para crear el snapshot basta ejecutar ```btrfs subvolume snapshot /mnt/disco5/vol1 /mnt/disco5/snap```. Lo que indica el comando es que se está creando un snapshot de /mnt/disco5/vol1 en /mnt/disco5/snap. Ejecutando ```df -h```, se puede apreciar que el espacio alocado y consumido no se vio modificado.
+
 17. Modificar el contenido el archivo original agregándole **para sistemas operativos** ¿Se modifica la copia en el snapshot?
+
+    No, el snapshot es un volumen aparte.
+
 18. Si se desea volver al subvolumen original, ¿cómo lo haría? (sin hacer un copy o move de los archivos)
 
-<http://www.nongnu.org/ext2-doc/ext2.html>
-<http://e2fsprogs.sourceforge.net/ext2intro.html>
-<http://www.cyberciti.biz/tips/understanding-unixlinux-filesystem-superblock.html>
-<http://www.tldp.org/LDP/tlk/fs/filesystem.html>
-<https://kernelnewbies.org/Ext4>
-<http://www.geekride.com/hard-link-vs-soft-link/>
-<https://www.howtoforge.com/linux_lvm>
-<https://www.digitalocean.com/community/tutorials/an-introduction-to-lvm-concepts-terminology-and-operations>
-<https://btrfs.wiki.kernel.org/index.php/Main_Page>
-<https://lwn.net/Articles/579009/>
+    Lo haría restaurando el snapshot creado. Lo que se hace es borrar el volumen que querés y crear un snapshot al snapshot creado anteriormente (el snapshot es un volumen más), entonces es una copia de los datos antes de las modificaciones. Los comandos para hacer la restauración:
+
+    ```bash
+    btrfs subvolume delete /mnt/disco5/vol1
+    btrfs subvolume snapshot /mnt/disco5/snap /mnt/disco5/vol1
+    ```
